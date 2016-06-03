@@ -1,0 +1,130 @@
+[
+  {
+    "user": "syui",
+    "host": "macbook",
+    "disk": "",
+    "partition": {
+      "sda1": {
+        "type": "vfat",
+        "size": "0 200"
+      },
+      "sda2": {
+        "type": "ext4",
+        "size": "200 100%"
+      }
+    },
+    "app": "
+	 archlinux-keyring
+	 numix-themes
+	 ttf-dejavu
+	 zsh
+	 git
+	 tmux
+	 gvim
+	 jq
+	 dialog
+	 ifplugd
+	 net-tools
+	 wireless_tools
+	 wpa_supplicant
+	 wpa_actiond
+	 lilyterm
+	 go
+	 ctags
+	 xorg
+	 xorg-xinit
+	 xorg-server
+	 xorg-utils
+	 xorg-twm
+	 xterm
+	 slim
+	 imagemagick
+	 ffmpeg
+	 mplayer
+	 vlc
+	 i3
+	 spacefm
+	 conky
+	 xbindkeys
+	 xdotool
+	 chromium
+	 gparted
+	 mcomix
+	 gthumb
+	 tumbler
+	 perl-image-exiftool
+	 feh
+	 xclip
+	 clipit
+	 udevil
+	 exfat-utils
+	 fuse-exfat
+	 ntfs-3g 
+	 fcitx
+	 fcitx-gtk3
+	 fcitx-configtool
+	 fcitx-mozc
+	 zip
+	 youtube-dl
+	 pulseaudio-alsa
+	 bluez bluez-libs
+	 bluez-utils
+	 bluez-firmware
+	 gimp 
+	 atool
+	 downgrade
+	 blueman
+	 pamixer
+	 pavucontrol
+	 android-tools
+	 virtualbox
+	 virtualbox-guest-dkms
+	 virtualbox-guest-utils
+	 linux-headers
+    ",
+    "yaourt": "
+	 notify-send.sh
+	 pasystray-git
+	 otf-ipaexfont
+	 i3blocks   
+    ",
+    "script": "
+	 echo syui:root | chpasswd
+	 mkdir -p /boot/efi
+	 mount /dev/${x}1 /boot/efi
+	 archg=EFI/arch/grubx64.efi
+	 osxg=System/Library/CoreServices
+	 icns=https://raw.githubusercontent.com/syui/arch/master/icon/archlinux.volumeicon.icns
+	 grub-install --target=x86_64-efi --efi-directory=/boot/efi --recheck
+	 mkdir -p /boot/efi/$osxg
+	 cp /boot/efi/$archg /boot/efi/$osxg/Boot.efi
+	 curl -sL $icns -o /boot/efi/.volumeicon.icns
+	 su syui -c 'curl -sL git.io/syu | zsh'
+	 su syui -s /bin/zsh -c 'source ~/.zshrc && source ~/dotfile/.zsh/plugin/install.zsh/install.linux.zsh'
+	 echo -e 'default_user syui\nauto_login yes\ndaemon yes' >> /etc/slim.conf
+	 systemctl enable slim
+	 systemctl enable bluetooth
+	 chsh -s /bin/zsh
+	 chsh -s /bin/zsh syui
+	 sed -i 's/timeout=5/timeout=0/g' /boot/grub/grub.cfg
+	 git clone https://github.com/syui/numix-icon-theme /usr/share/icons/Numix-Dark
+	 git clone https://github.com/numixproject/numix-icon-theme /usr/share/icons/numix-icon-theme
+	 cp -rf /home/syui/dotfiles/etc/fonts/conf.avail/71-no-embedded-bitmaps.conf /etc/fonts/conf.d
+	 cp -rf /usr/share/icons/numix-icon-theme/Numix /usr/share/icons/Numix
+	 rm -rf /usr/share/icons/Adwaita
+	 cp -rf /usr/share/icons/numix-icon-theme/Numix /usr/share/icons/Adwaita
+	 cp -rf /home/syui/dotfiles/etc/vconsole.conf /etc/vconsole.conf
+	 cp -rf /home/syui/dotfiles/etc/X11/xorg.conf.d/*.conf /etc/X11/xorg.conf.d/
+	 curl -sL https://raw.githubusercontent.com/syui/arch/master/bin/icon.sh | zsh
+	 locale-gen
+	 echo 'pacman -S nmap wireshark-cli aircrack-ng arp-scan tor p7zip handbrake handbrake-cli inkscape clamav sysstat dstat iotop archlinux-themes-slim slim-themes gauche awesome vicious dwb xvkbd firefox libotf qiv xsel htop powertop krita arandr gvfs networkmanager' >> install.txt
+	 echo 'yaourt -S broadcom-wl-dkms go-mtpfs-git dropbox iptraf-ng wireshark-cli proxychains-ng' >> install.txt
+    ",
+    "comment": "
+	 #password : root
+	 #passwd
+	 #passwd syui
+    ",
+    "reboot": "true"
+  }
+]

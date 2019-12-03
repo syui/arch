@@ -1,0 +1,8 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "syui/arch"
+  config.ssh.private_key_path = "~/.ssh/vagrant"
+  config.ssh.guest_port = 22
+  config.ssh.username = "arch"
+  config.ssh.host = "127.0.0.1"
+  config.vm.synced_folder '.', '/vagrant', disabled: true
+end

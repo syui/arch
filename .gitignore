@@ -1,0 +1,5 @@
+.vagrant
+packer_cache
+packer/arch.box
+packer/packer_cache
+packer/.vagrant

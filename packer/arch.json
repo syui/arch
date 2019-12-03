@@ -1,0 +1,37 @@
+{
+    "variables": {
+        "iso_url": "https://mirrors.kernel.org/archlinux/iso/{{isotime \"2006.01\"}}.01/archlinux-{{isotime \"2006.01\"}}.01-x86_64.iso",
+        "iso_checksum_url": "https://mirrors.kernel.org/archlinux/iso/{{isotime \"2006.01\"}}.01/sha1sums.txt",
+        "iso_checksum_type": "sha1",
+        "ssh_timeout": "20m",
+        "country": "US",
+        "headless": "false"
+    },
+    "builders": [
+        {
+            "type": "virtualbox-iso",
+            "iso_url": "{{ user `iso_url` }}",
+            "iso_checksum_url": "{{ user `iso_checksum_url` }}",
+            "iso_checksum_type": "{{ user `iso_checksum_type` }}",
+            "guest_os_type": "ArchLinux_64",
+            "guest_additions_mode": "disable",
+            "http_directory": "srv",
+            "boot_wait": "5s",
+            "boot_command": [
+                "<enter><wait10><wait10><wait10><wait10>",
+                "curl -sL git.io/air|bash<enter><wait5>"
+            ],
+            "disk_size": 20480,
+            "hard_drive_interface": "sata",
+            "ssh_username": "arch",
+            "ssh_password": "arch",
+            "ssh_timeout": "{{ user `ssh_timeout` }}"
+        }
+    ],
+    "post-processors": [
+        {
+            "type": "vagrant",
+            "output": "arch.box"
+        }
+    ]
+}

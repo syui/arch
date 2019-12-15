@@ -11,6 +11,7 @@ sdc
 
 $ export x=c
 $ curl -sL git.io/air | zsh
+# curl -sL git.io/airarch | zsh
 ```
 
 ### user : password

@@ -1,12 +1,12 @@
 if [ ! -f ./setup.json ];then
     url=https://raw.githubusercontent.com/syui/arch/master/json
-    if [ "$1" != "" ];then
+    if [ -n "$1" ];then
         user=$1
         if [ "`curl -sL "$url/${user}.json"`" != "Not Found" ];then
             curl -sL "$url/${user}.json" -o ./setup.json
         fi
     fi
-    if [ "$u" != "" ];then
+    if [ -n "$u" ];then
         user=$u
         if [ "`curl -sL "$url/${user}.json"`" != "Not Found" ];then
             curl -sL "$url/${user}.json" -o ./setup.json
@@ -21,6 +21,8 @@ else
     fi
 fi
 
+echo "user : $user"
+
 if [ "`curl -sL ipinfo.io | grep country | cut -d '"' -f 4`" = "JP" -a "${SHELL##*/}" = "zsh" ];then
     cp -rf /etc/pacman.d/mirrorlist /etc
     zsh -c "cat /etc/mirrorlist | grep -A1 Japan >! /etc/pacman.d/mirrorlist"
@@ -28,8 +30,8 @@ if [ "`curl -sL ipinfo.io | grep country | cut -d '"' -f 4`" = "JP" -a "${SHELL#
 fi
 
 if ! pacman -Sy ;then
-    pacman-key --refresh-keys
-    pacman -Sy
+    #pacman-key --refresh-keys
+    #pacman -Sy
 fi
 
 if ! -f /usr/bin/jq > /dev/null 2>&1;then
@@ -95,18 +97,26 @@ if [ -f ./setup.json ];then
     a=`cat ./setup.json | jq -r '.[].app' | tr '\n' ' '`
     u=`cat ./setup.json | jq -r '.[].user'`
     h=`cat ./setup.json | jq -r '.[].host'`
-    s=`cat ./setup.json | jq -r '.[].script'`
-    c=`cat ./setup.json | jq -r '.[].comment'`
+    s=`cat ./setup.json | jq -r '.[].script|.[]'`
+    c=`cat ./setup.json | jq -r '.[].comment|.[]'`
     r=`cat ./setup.json | jq -r '.[].reboot'`
+				yay=`cat ./setup.json | jq -r '.[].yay|.[]'`
 fi
 
 echo -e 'Defaults env_keep += "HOME"\n%wheel ALL=(ALL) ALL' >> /mnt/etc/sudoers
 echo -e '%wheel ALL=(ALL) NOPASSWD: /usr/bin/pacman -Syu --noconfirm, /usr/bin/reboot, /usr/bin/poweroff' >> /mnt/etc/sudoers
 
-u=arch
+if [ -z "$u" ];then
+	u=arch
+fi
+
+if [ -z "$h" ];then
+	h=$u
+fi
+
 
 if [ ! -f /mnt/etc/hostname ];then
-     echo $u > /mnt/etc/hostname
+     echo $h > /mnt/etc/hostname
 fi
 
 arch-chroot /mnt /bin/bash -c "
@@ -117,22 +127,24 @@ echo root:root | chpasswd
 
 arch-chroot /mnt /bin/bash -c "useradd -m -G wheel -s /bin/bash $u;echo $u:$u | chpasswd"
 
-arch-chroot /mnt /bin/bash -c "su $u -c 'mkdir -p /home/arch/.ssh;curl --output /home/arch/.ssh/authorized_keys --location https://raw.github.com/syui/arch/master/keys/vagrant.pub';
-su $u -c 'git clone https://github.com/elnappo/dotfiles /home/arch/dotfiles'
+arch-chroot /mnt /bin/bash -c "su $u -c 'mkdir -p /home/$u/.ssh;curl --output /home/$u/.ssh/authorized_keys --location https://raw.github.com/syui/arch/master/keys/vagrant.pub';
+su $u -c 'git clone https://github.com/elnappo/dotfiles /home/$u/dotfiles'
 "
 
-#install
-if [ "$a" != "" ];then
-    arch-chroot /mnt /bin/bash -c "
-    pacman -Sy $a --noconfirm
-    "
+#pacman
+if [ -n "$a" ];then
+    arch-chroot /mnt /bin/bash -c "pacman -Sy $a --noconfirm"
 fi
 
 #script
-if [ "$s" != "" ];then
-    arch-chroot /mnt /bin/bash -c "
-    $s
-    "
+if [ -n "$s" ];then
+    arch-chroot /mnt /bin/bash -c "$s"
+fi
+
+#yay
+if [ -n "$yay" ];then
+    arch-chroot /mnt /bin/bash -c "cd $HOME && pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git &&  cd yay && makepkg -si"
+    arch-chroot /mnt /bin/bash -c "yay -Sy $yay --noconfirm"
 fi
 
 #reboot

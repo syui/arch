@@ -14,9 +14,9 @@ if [ -f ./setup.json ];then
     x=`cat setup.json | jq -r '.[].disk'`
     echo "$x : "
     n=`cat setup.json | jq -r '.[].partition|length'`
-    yaourt=`cat setup.json | jq -r '.[].yaourt'`
-    script=`cat setup.json | jq -r '.[].script'`
-    comment=`cat setup.json | jq -r '.[].comment'`
+    yay=`cat setup.json | jq -r '.[].yay|.[]'`
+    script=`cat setup.json | jq -r '.[].script|.[]'`
+    comment=`cat setup.json | jq -r '.[].comment|.[]'`
     for (( i=1;i<=${n};i++ ))
     do
         echo -e "\t${x}${i} : "
@@ -25,8 +25,8 @@ if [ -f ./setup.json ];then
         s=`cat setup.json | jq -r ".[].partition|.${x}${i}|.size"`
         echo -e "\t\ttype : $s"
     done
-    echo "app : $a"
-    echo "yaourt : $yaourt"
+    echo "pacman : $a"
+    echo "yay : $yay"
     echo "script : $script"
     echo "comment : $comment"
 fi

@@ -143,7 +143,7 @@ fi
 
 #yay
 if [ -n "$yay" ];then
-    arch-chroot /mnt /bin/bash -c "cd $HOME && pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git &&  cd yay && makepkg -si"
+    arch-chroot /mnt /bin/bash -c "su $u -c 'cd /home/$u && git clone https://aur.archlinux.org/yay.git &&  cd yay && makepkg -si'"
     arch-chroot /mnt /bin/bash -c "yay -Sy $yay --noconfirm"
 fi
 

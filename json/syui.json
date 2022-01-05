@@ -42,7 +42,7 @@
       "curl -sL https://raw.githubusercontent.com/syui/arch/master/bin/icon.sh | zsh",
       "locale-gen"
     ],
-    "comment": ["passwd : root,syui"],
+    "comment": ["passwd : root"],
     "reboot": "true"
   }
 ]
